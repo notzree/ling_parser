@@ -34,6 +34,6 @@ pub enum TokenType {
     Str(String),
     Number(Number),
     Boolean(bool),
-    Null, // Just represent Null as a variant without any data
+    Null(), // Just represent Null as a variant without any data
     Char(char),
 }

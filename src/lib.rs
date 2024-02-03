@@ -1,18 +1,3 @@
-// pub fn add(left: usize, right: usize) -> usize {
-//     left + right
-// }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn it_works() {
-//         let result = add(2, 2);
-//         assert_eq!(result, 4);
-//     }
-// }
-
 mod constants;
 mod lexer;
 mod parser;
@@ -88,13 +73,13 @@ mod tests {
     }
     #[test]
     fn correctly_lexes_nulls() {
-        let test_string = "{\"null_value_one\":null,\"null_value_two\":Null}".to_string();
+        let test_string = "{\"null_value_one\":null,\"null_value_two\":\"Null\"}".to_string();
         let result = lex(test_string);
         let expected = vec![
             TokenType::Char('{'),
             TokenType::Str("null_value_one".to_string()),
             TokenType::Char(':'),
-            TokenType::Null,
+            TokenType::Null(),
             TokenType::Char(','),
             TokenType::Str("null_value_two".to_string()),
             TokenType::Char(':'),
@@ -103,9 +88,55 @@ mod tests {
         ];
         match result {
             Ok(r) => {
+                println!("{:?}", r);
                 assert_eq!(r, expected)
             }
-            Err(_) => assert!(false),
+            Err(e) => {
+                println!("{:?}", e);
+                assert!(false)
+            }
+        }
+    }
+    #[test]
+    fn correctly_lexes_nested_json() {
+        let test_string = r#"{
+            "nested_object": {"inner_key": "inner_value", "inner_number": 42.69},
+            "nested_array": [true, null, {"array_object_key": "array_object_value"}]
+        }"#
+        .to_string();
+        let result = lex(test_string);
+        let expected = vec![
+            TokenType::Char('{'),
+            TokenType::Str("nested_object".to_string()),
+            TokenType::Char(':'),
+            TokenType::Char('{'),
+            TokenType::Str("inner_key".to_string()),
+            TokenType::Char(':'),
+            TokenType::Str("inner_value".to_string()),
+            TokenType::Char(','),
+            TokenType::Str("inner_number".to_string()),
+            TokenType::Char(':'),
+            TokenType::Number(Number::Float(42.69)),
+            TokenType::Char('}'),
+            TokenType::Char(','),
+            TokenType::Str("nested_array".to_string()),
+            TokenType::Char(':'),
+            TokenType::Char('['),
+            TokenType::Boolean(true),
+            TokenType::Char(','),
+            TokenType::Null(),
+            TokenType::Char(','),
+            TokenType::Char('{'),
+            TokenType::Str("array_object_key".to_string()),
+            TokenType::Char(':'),
+            TokenType::Str("array_object_value".to_string()),
+            TokenType::Char('}'),
+            TokenType::Char(']'),
+            TokenType::Char('}'),
+        ];
+        match result {
+            Ok(r) => assert_eq!(r, expected),
+            Err(_) => assert!(false, "Lexer failed to lex nested JSON correctly."),
         }
     }
 }

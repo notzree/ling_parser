@@ -96,7 +96,7 @@ pub fn lex(str: String) -> Result<Vec<TokenType>, Box<dyn std::error::Error>> {
         let (is_null, return_string) = lex_null(input_string)?;
         input_string = return_string;
         if is_null {
-            tokens.push(TokenType::Null);
+            tokens.push(TokenType::Null());
             continue;
         }
 
