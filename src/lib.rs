@@ -44,7 +44,7 @@ mod tests {
     }
     #[test]
     fn correctly_lexes_numbers() {
-        let test_string = "{\"key1\":\"900\",\"key2\":\"99.99\" }".to_string();
+        let test_string = "{\"key1\":900,\"key2\":99.99}".to_string();
         let result = lex(test_string);
         let expected = vec![
             TokenType::Char('{'),
@@ -55,6 +55,28 @@ mod tests {
             TokenType::Str("key2".to_string()),
             TokenType::Char(':'),
             TokenType::Number(Number::Float(99.99)),
+            TokenType::Char('}'),
+        ];
+        match result {
+            Ok(r) => {
+                assert_eq!(r, expected)
+            }
+            Err(_) => assert!(false),
+        }
+    }
+    #[test]
+    fn correctly_lexes_bool() {
+        let test_string = "{\"do eces shower?\":false,\"Do eces stink?\":true}".to_string();
+        let result = lex(test_string);
+        let expected = vec![
+            TokenType::Char('{'),
+            TokenType::Str("do eces shower?".to_string()),
+            TokenType::Char(':'),
+            TokenType::Boolean(false),
+            TokenType::Char(','),
+            TokenType::Str("Do eces stink?".to_string()),
+            TokenType::Char(':'),
+            TokenType::Boolean(true),
             TokenType::Char('}'),
         ];
         match result {

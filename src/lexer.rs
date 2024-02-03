@@ -3,7 +3,6 @@
 use crate::constants::*;
 
 fn lex_string(str: String) -> Result<(Option<String>, String), Box<dyn std::error::Error>> {
-    println!("lex_string: {}", str);
     let mut json_string = String::new();
     let mut itr = 0;
     if let Some(c) = str.chars().nth(0) {
@@ -70,14 +69,6 @@ pub fn lex(str: String) -> Result<Vec<TokenType>, Box<dyn std::error::Error>> {
     let mut input_string = str.clone();
     let mut tokens: Vec<TokenType> = Vec::new();
     while !input_string.is_empty() {
-        println!("{} ", input_string);
-        //try to parse current input as string
-        let (json_string, return_string) = lex_string(input_string)?;
-        input_string = return_string;
-        if let Some(s) = json_string {
-            tokens.push(TokenType::Str(s));
-            continue;
-        }
         //Try parsing as number
         let (json_number, return_string) = lex_number(input_string)?;
         input_string = return_string;
@@ -85,6 +76,15 @@ pub fn lex(str: String) -> Result<Vec<TokenType>, Box<dyn std::error::Error>> {
             tokens.push(TokenType::Number(s));
             continue;
         }
+
+        //try to parse current input as string
+        let (json_string, return_string) = lex_string(input_string)?;
+        input_string = return_string;
+        if let Some(s) = json_string {
+            tokens.push(TokenType::Str(s));
+            continue;
+        }
+
         //Try parsing as boolean
         let (json_bool, return_string) = lex_bool(input_string)?;
         input_string = return_string;
