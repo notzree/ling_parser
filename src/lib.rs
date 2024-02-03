@@ -86,4 +86,26 @@ mod tests {
             Err(_) => assert!(false),
         }
     }
+    #[test]
+    fn correctly_lexes_nulls() {
+        let test_string = "{\"null_value_one\":null,\"null_value_two\":Null}".to_string();
+        let result = lex(test_string);
+        let expected = vec![
+            TokenType::Char('{'),
+            TokenType::Str("null_value_one".to_string()),
+            TokenType::Char(':'),
+            TokenType::Null,
+            TokenType::Char(','),
+            TokenType::Str("null_value_two".to_string()),
+            TokenType::Char(':'),
+            TokenType::Str("Null".to_string()),
+            TokenType::Char('}'),
+        ];
+        match result {
+            Ok(r) => {
+                assert_eq!(r, expected)
+            }
+            Err(_) => assert!(false),
+        }
+    }
 }
