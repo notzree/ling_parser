@@ -24,16 +24,30 @@ pub const TRUE_LENGTH: usize = "true".len();
 pub const FALSE_LENGTH: usize = "false".len();
 pub const NULL_LENGTH: usize = "null".len();
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Number {
     Int(i32),   // You can choose the integer type that best fits your needs (i32, i64, etc.)
     Float(f64), // Similarly, choose the floating-point precision you need (f32, f64)
 }
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TokenType {
     Str(String),
     Number(Number),
     Boolean(bool),
     Null(), // Just represent Null as a variant without any data
     Char(char),
+}
+
+#[derive(Debug)]
+pub enum ParseError {
+    RootNotObject,
+    UnexpectedToken,
+    OtherError(String),
+    EmptyTokenList,
+}
+
+pub enum JsonValue {
+    Array(Vec<JsonValue>),
+    Object(Vec<(String, JsonValue)>),
+    Other(String),
 }
